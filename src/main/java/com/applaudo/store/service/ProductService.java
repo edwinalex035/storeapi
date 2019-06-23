@@ -68,11 +68,21 @@ public class ProductService {
     }
 
     public Product update(Product product) {
-        return productRepository.save(product);
+        Product oldProduct = findById(product.getId());
+        oldProduct.setDescription(product.getDescription());
+        oldProduct.setPrice(product.getPrice());
+        oldProduct.setStock(product.getStock());
+        return productRepository.save(oldProduct);
     }
 
     public void delete(Long id) {
         productRepository.deleteById(id);
+    }
+
+    public void like(Long id) {
+        Product product = findById(id);
+        product.setPopularity(product.getPopularity() + 1);
+        update(product);
     }
 
 }

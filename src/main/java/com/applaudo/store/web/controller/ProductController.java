@@ -119,5 +119,10 @@ public class ProductController {
         productService.delete(id);
     }
 
-
+    @PutMapping(value = "/like/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
+    public void like(@PathVariable("id") Long id) {
+        productService.like(id);
+    }
 }

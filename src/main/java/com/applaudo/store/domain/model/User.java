@@ -1,9 +1,12 @@
 package com.applaudo.store.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -23,6 +26,11 @@ public class User implements Serializable {
     @ManyToOne
     @JoinColumn(name = "ID_ROLE")
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonIgnore
+    private Set<BuyProduct> purchases = new HashSet<>();
 
     @Override
     public String toString() {
