@@ -9,6 +9,7 @@ import com.google.common.base.Preconditions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -45,6 +46,7 @@ public class ProductController {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'CUSTOMER')")
     public ResponseEntity<Product> findById(@PathVariable("id") Long id, HttpServletResponse response) {
         try {
             Product product = RestPreconditions.checkFound(productService.findById(id));
@@ -56,6 +58,7 @@ public class ProductController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> create(@RequestBody Product product) {
         Preconditions.checkNotNull(product);
         Product response = productService.create(product);
@@ -64,6 +67,7 @@ public class ProductController {
 
     @PutMapping(value = "$(id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> update(@PathVariable("id") Long id, @RequestBody Product product) {
         Preconditions.checkNotNull(product);
         Product response = productService.update(product);
@@ -72,6 +76,7 @@ public class ProductController {
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable("id") Long id) {
         productService.delete(id);
     }

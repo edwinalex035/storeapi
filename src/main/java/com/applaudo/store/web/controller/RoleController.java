@@ -19,7 +19,6 @@ public class RoleController {
     private RoleRepository roleRepository;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public List<Role> list(OAuth2Authentication authentication) {
         List<Role> roles = roleRepository.findAll();
 

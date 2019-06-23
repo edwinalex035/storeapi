@@ -24,10 +24,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
-                .antMatchers("/health").permitAll()
-                .antMatchers("/info").permitAll()
+                .antMatchers("/actuator**").permitAll()
                 .antMatchers("/oauth/**").permitAll()
+                .antMatchers("/api/products**").permitAll()
+                //.antMatchers("/api/**").authenticated()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers("/api/**").authenticated();
+        ;
     }
+
 }

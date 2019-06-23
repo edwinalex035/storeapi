@@ -17,25 +17,31 @@ public class ProductService {
     ProductRepository productRepository;
 
     public List<Product> list() {
-        return productRepository.findAll();
+        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+        return productRepository.findAll(sort);
     }
 
     public List<Product> list(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        Sort sort = Sort.by(Sort.Direction.ASC, "name");
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         Page<Product> productPage = productRepository.findAll(pageRequest);
         return productPage.getContent();
     }
 
     public List<Product> list(int page, int size, String orderBy, String direction) {
-        PageRequest pageRequest = PageRequest.of(page, size,
-                Sort.by(direction.equals("asc")? Sort.Direction.ASC : Sort.Direction.DESC,
-                        orderBy));
+        String sortDirection = (direction.isEmpty() || direction.toLowerCase().equals("asc"))?
+                "asc" : "desc";
+        String sortOrderBy = (orderBy.toLowerCase().equals("name") || orderBy.toLowerCase().equals("popularity"))?
+                orderBy.toLowerCase() : "name";
+        Sort sort = Sort.by(sortDirection.equals("asc")? Sort.Direction.ASC : Sort.Direction.DESC,
+                sortOrderBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
         Page<Product> productPage = productRepository.findAll(pageRequest);
         return productPage.getContent();
     }
 
-    public Optional<Product> findById(Long id) {
-        return productRepository.findById(id);
+    public Product findById(Long id) {
+        return productRepository.findById(id).get();
     }
 
     public Product create(Product product) {

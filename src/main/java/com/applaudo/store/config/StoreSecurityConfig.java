@@ -57,9 +57,8 @@ public class StoreSecurityConfig extends WebSecurityConfigurerAdapter {
                 //.cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/products/").permitAll()
-                .antMatchers("/actuator/health").permitAll()
-                .antMatchers("/actuator/metrics").permitAll()
+                .antMatchers("api/products**").permitAll()
+                .antMatchers("/actuator**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -78,12 +77,9 @@ public class StoreSecurityConfig extends WebSecurityConfigurerAdapter {
      * @param web
      */
     public void configure(WebSecurity web) throws Exception {
+        super.configure(web);
+        web.ignoring().antMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info");
+        web.ignoring().antMatchers(HttpMethod.GET, "/api/products/");
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
-		 /*
-		 web.ignoring().antMatchers("/health")
-		 web.ignoring().antMatchers("/info")
-		 */
     }
-
-
 }
