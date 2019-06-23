@@ -6,6 +6,7 @@ import com.applaudo.store.domain.model.User;
 import com.applaudo.store.domain.repository.BuyProductRepository;
 import com.applaudo.store.domain.repository.ProductRepository;
 import com.applaudo.store.domain.repository.UserRepository;
+import com.applaudo.store.web.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,7 +45,7 @@ public class BuyProductService {
 
             return finalOrder;
         } else {
-            throw new Exception("There is not enough stock of the product");
+            throw new CustomException("There is not enough stock of the product");
         }
     }
 }
