@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 
 @Service("buyProductService")
 public class BuyProductService {
@@ -35,6 +36,7 @@ public class BuyProductService {
             finalOrder.setQuantity(order.getQuantity());
             finalOrder.setUser(user);
             finalOrder.setProduct(product);
+            finalOrder.setBuyDate(new Date());
             buyProductRepository.save(finalOrder);
 
             product.setStock(qtyAvailable);

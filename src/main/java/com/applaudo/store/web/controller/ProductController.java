@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -106,9 +107,10 @@ public class ProductController {
     @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Product> update(@PathVariable("id") Long id, @RequestBody Product product) {
+    public ResponseEntity<Product> update(@PathVariable("id") Long id, @RequestBody Product product, OAuth2Authentication authentication) {
         Preconditions.checkNotNull(product);
-        Product response = productService.update(product);
+        String username = (String) authentication.getUserAuthentication().getPrincipal();
+        Product response = productService.update(product, username);
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
 

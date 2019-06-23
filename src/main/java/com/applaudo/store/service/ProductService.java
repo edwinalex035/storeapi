@@ -1,20 +1,30 @@
 package com.applaudo.store.service;
 
+import com.applaudo.store.domain.model.PriceLog;
 import com.applaudo.store.domain.model.Product;
+import com.applaudo.store.domain.repository.PriceLogRepository;
 import com.applaudo.store.domain.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service("productService")
 public class ProductService {
+    private static Logger logger = LoggerFactory.getLogger(ProductService.class);
+
     @Autowired
     ProductRepository productRepository;
+    @Autowired
+    PriceLogRepository priceLogRepository;
 
     public List<Product> list() {
         Sort sort = Sort.by(Sort.Direction.ASC, "name");
@@ -68,11 +78,30 @@ public class ProductService {
     }
 
     public Product update(Product product) {
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public Product update(Product product, String username) {
+        PriceLog priceLog = new PriceLog();
         Product oldProduct = findById(product.getId());
+        priceLog.setOldPrice(oldProduct.getPrice());
         oldProduct.setDescription(product.getDescription());
+        priceLog.setNewPrice(product.getPrice());
         oldProduct.setPrice(product.getPrice());
         oldProduct.setStock(product.getStock());
-        return productRepository.save(oldProduct);
+        oldProduct = productRepository.save(oldProduct);
+
+        // Saving price log
+        priceLog.setIdProduct(oldProduct.getId());
+        priceLog.setUsername(username);
+        priceLog.setCreateDt(new Date());
+        priceLog = priceLogRepository.save(priceLog);
+
+        //Saving in log file
+        logger.info("update(): Change in product price: " + priceLog);
+
+        return oldProduct;
     }
 
     public void delete(Long id) {
