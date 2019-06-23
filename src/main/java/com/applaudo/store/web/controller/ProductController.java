@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -56,16 +57,53 @@ public class ProductController {
         }
     }
 
+    @GetMapping(params = { "name" })
+    public ResponseEntity<List<Product>> findByName(@RequestParam("name") String name, HttpServletResponse response) {
+        try {
+            List<Product> products = RestPreconditions.checkFound(productService.findByName(name));
+            return new ResponseEntity<>(products, null, HttpStatus.OK);
+        } catch (MyResourceNotFoundException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(params = { "name", "page", "size" })
+    public ResponseEntity<List<Product>> findByName(@RequestParam("name") String name,
+                                                    @RequestParam("page") int page, @RequestParam("size") int size,
+                                                    UriComponentsBuilder uriComponentsBuilder, HttpServletResponse response) {
+        try {
+            List<Product> products = RestPreconditions.checkFound(productService.findByName(name, page, size));
+            return new ResponseEntity<>(products, null, HttpStatus.OK);
+        } catch (MyResourceNotFoundException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping(params = { "name", "page", "size", "orderBy", "direction"})
+    public ResponseEntity<List<Product>> findByName(@RequestParam("name") String name,
+                                                    @RequestParam("page") int page, @RequestParam("size") int size,
+                                                    @RequestParam("orderBy") String orderBy, @RequestParam("direction") String direction,
+                                                    UriComponentsBuilder uriComponentsBuilder, HttpServletResponse response) {
+        try {
+            List<Product> products = RestPreconditions.checkFound(productService.findByName(name, page, size, orderBy, direction));
+            return new ResponseEntity<>(products, null, HttpStatus.OK);
+        } catch (MyResourceNotFoundException ex) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Product> create(@RequestBody Product product) {
+    public ResponseEntity<Product> create(@RequestBody Product product, Authentication authentication) {
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+        System.out.println("authority: " + role);
         Preconditions.checkNotNull(product);
         Product response = productService.create(product);
         return new ResponseEntity<>(response, null, HttpStatus.CREATED);
     }
 
-    @PutMapping(value = "$(id}")
+    @PutMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Product> update(@PathVariable("id") Long id, @RequestBody Product product) {
@@ -74,7 +112,7 @@ public class ProductController {
         return new ResponseEntity<>(response, null, HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('ADMIN')")
     public void delete(@PathVariable("id") Long id) {

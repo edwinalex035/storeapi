@@ -44,6 +44,25 @@ public class ProductService {
         return productRepository.findById(id).get();
     }
 
+    public List<Product> findByName(String name) {
+        return productRepository.findByNameContaining(name);
+    }
+
+    public List<Product> findByName(String name, int page, int size) {
+        return findByName(name, page, size, "", "");
+    }
+
+    public List<Product> findByName(String name, int page, int size, String orderBy, String direction) {
+        String sortDirection = (direction.isEmpty() || direction.toLowerCase().equals("asc"))?
+                "asc" : "desc";
+        String sortOrderBy = (orderBy.toLowerCase().equals("name") || orderBy.toLowerCase().equals("popularity"))?
+                orderBy.toLowerCase() : "name";
+        Sort sort = Sort.by(sortDirection.equals("asc")? Sort.Direction.ASC : Sort.Direction.DESC,
+                sortOrderBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        return productRepository.findByNameContaining(name, pageRequest);
+    }
+
     public Product create(Product product) {
         return productRepository.save(product);
     }

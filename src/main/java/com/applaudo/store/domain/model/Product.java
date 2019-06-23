@@ -26,4 +26,7 @@ public class Product implements Serializable {
 
     @Column
     private int popularity;
+
+    @Column
+    private int stock;
 }

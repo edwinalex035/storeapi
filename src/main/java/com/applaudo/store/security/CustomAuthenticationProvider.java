@@ -34,7 +34,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         user = userService.login(username, password);
         if(user != null) {
-            System.out.println("Role: " + user.getRole().getCode());
+            System.out.println(user);
             GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getCode());
             auth = new UsernamePasswordAuthenticationToken(username, password,
                     Arrays.asList(authority));

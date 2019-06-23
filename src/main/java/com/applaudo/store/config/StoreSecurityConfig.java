@@ -22,6 +22,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 
 @Configuration
 @ComponentScan("com.applaudo.security")
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class StoreSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AuthenticationProvider authenticationProvider;
