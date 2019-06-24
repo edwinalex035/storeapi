@@ -32,6 +32,8 @@ public class ProductService {
     }
 
     public List<Product> list(int page, int size) {
+        page = (page < 0)? 0 : page;
+        size = (size < 0)? 5 : size;
         Sort sort = Sort.by(Sort.Direction.ASC, "name");
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         Page<Product> productPage = productRepository.findAll(pageRequest);
@@ -39,6 +41,8 @@ public class ProductService {
     }
 
     public List<Product> list(int page, int size, String orderBy, String direction) {
+        page = (page < 0)? 0 : page;
+        size = (size < 0)? 5 : size;
         String sortDirection = (direction.isEmpty() || direction.toLowerCase().equals("asc"))?
                 "asc" : "desc";
         String sortOrderBy = (orderBy.toLowerCase().equals("name") || orderBy.toLowerCase().equals("popularity"))?
@@ -63,6 +67,8 @@ public class ProductService {
     }
 
     public List<Product> findByName(String name, int page, int size, String orderBy, String direction) {
+        page = (page < 0)? 0 : page;
+        size = (size < 0)? 5 : size;
         String sortDirection = (direction.isEmpty() || direction.toLowerCase().equals("asc"))?
                 "asc" : "desc";
         String sortOrderBy = (orderBy.toLowerCase().equals("name") || orderBy.toLowerCase().equals("popularity"))?
