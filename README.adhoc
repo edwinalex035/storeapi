@@ -94,3 +94,20 @@ This is a Maven project. Currently it can be compiled with java 1.8. Please exec
 maven clean package
 ----
 And you can start testing the application. Please note, that I did not share a database dump because I use an In-Memory Database. The scripts are available into the resources folder.
+
+== Deploy in Docker
+
+As an enhancement the application can be run in a Docker Container. To do this, a maven plugin is been used. The steps to follow are:
+Generate the jar file
+----
+mvn clean package
+----
+Generate the Docker image. The name used is test/dockeragent
+----
+mvn com.spotify:dockerfile-maven-plugin:1.4.8:build
+----
+
+Run the image as follow:
+----
+docker run -p 8080:8080 test/dockeragent
+----
